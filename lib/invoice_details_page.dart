@@ -92,18 +92,15 @@ class _InvoiceDetailsDataTableState extends State<InvoiceDetailsDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    final invoiceBackButton = new RaisedButton(
-      padding: const EdgeInsets.all(8.0),
-      textColor: Colors.black,
-      color: Colors.blue,
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      child: Text("Back",
-          style: TextStyle(
-              fontStyle: FontStyle.normal,
-              fontSize: 20.0,
-              color: Colors.white)),
+    final invoiceDetailsAppBar = new AppBar(
+        automaticallyImplyLeading: true,
+        title: Text('Invoice Details',
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                color: Colors.white)),
+        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed:() => Navigator.pop(context, false),
+        )
     );
 
     final invoiceListTable = new PaginatedDataTable(
@@ -145,6 +142,7 @@ class _InvoiceDetailsDataTableState extends State<InvoiceDetailsDataTable> {
     );
 
     return Scaffold(
+      appBar: invoiceDetailsAppBar,
       body: SafeArea(
         top: true,
         bottom: true,
@@ -154,7 +152,6 @@ class _InvoiceDetailsDataTableState extends State<InvoiceDetailsDataTable> {
           padding: const EdgeInsets.all(20.0),
           children: <Widget>[
             invoiceListTable,
-            invoiceBackButton,
           ],
         ),
       ),

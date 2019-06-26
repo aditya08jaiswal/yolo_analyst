@@ -82,18 +82,15 @@ class _UserDetailsDataTableState extends State<UserDetailsDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    final userBackButton = new RaisedButton(
-      padding: const EdgeInsets.all(8.0),
-      textColor: Colors.black,
-      color: Colors.blue,
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      child: Text("Back",
-          style: TextStyle(
-              fontStyle: FontStyle.normal,
-              fontSize: 20.0,
-              color: Colors.white)),
+    final userDetailsAppBar = new AppBar(
+        automaticallyImplyLeading: true,
+        title: Text('User Details',
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                color: Colors.white)),
+        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed:() => Navigator.pop(context, false),
+        )
     );
 
     final userDetailsTable = new PaginatedDataTable(
@@ -114,10 +111,10 @@ class _UserDetailsDataTableState extends State<UserDetailsDataTable> {
           label: const Text('User Name'),
         ),
         DataColumn(
-          label: const Text('Email'),
+          label: const Text('Phone'),
         ),
         DataColumn(
-          label: const Text('Phone'),
+          label: const Text('Email'),
         ),
         DataColumn(
           label: const Text('Kiosk'),
@@ -128,6 +125,7 @@ class _UserDetailsDataTableState extends State<UserDetailsDataTable> {
     );
 
     return Scaffold(
+      appBar: userDetailsAppBar,
       body: SafeArea(
         top: true,
         bottom: true,
@@ -137,7 +135,6 @@ class _UserDetailsDataTableState extends State<UserDetailsDataTable> {
           padding: const EdgeInsets.all(20.0),
           children: <Widget>[
             userDetailsTable,
-            userBackButton,
           ],
         ),
       ),

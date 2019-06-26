@@ -17,4 +17,5 @@ class Constants{
   static DateTime TODATE=DateTime.now();
   static int USERID=0;
   static bool dateIssue=false;
+  static int SELECTEDKIOSKNUMBER = 0;
 }

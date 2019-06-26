@@ -19,7 +19,6 @@ class Post {
   Post({this.phone, this.password});
 
   factory Post.fromJson(Map<String, dynamic> json) {
-
     return Post(
       phone: json['phone'],
       password: json['password'],
@@ -112,12 +111,16 @@ class Analyst {
   }
 }
 
-class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver {
-
+class GetKioskListState extends State<GetKioskList>
+    with WidgetsBindingObserver {
   List<String> _allKiosk = Constants.KIOSKTAGLIST;
+  int i = 1;
 
   @override
   void initState() {
+    setState(() {
+      Constants.SELECTEDKIOSKNUMBER = Constants.KIOSKSTR.split(',').length;
+    });
     SharedPreferences sharedPreferences;
     Analyst analyst = new Analyst();
     int userId;
@@ -125,60 +128,65 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       userId = sharedPreferences?.getInt('userid');
-
-      url =
-          'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
-              userId.toString();
-      print(url);
-      int i = 0;
-      String kioskString = '';
-      List<String> kioskTagList = [];
-      analyst.fetchPost(url).then((responseFromMapping) {
-        print(responseFromMapping);
-        List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
-
-        for (var kiosk in kioskLists) {
-          LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
-          print('fdfdfdgfdddd ' +
-              LoginPage.mapping[kiosk['kiosktag']].toString());
-          i++;
-          kioskString = kioskString + kiosk['kioskid'].toString() + ",";
-          kioskTagList.add(kiosk['kiosktag']);
-
-        }
-        kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
-        Constants.KIOSKSTR = kioskTagList.last;
-        print(kioskTagList.last);
-        kioskTagList.removeLast();
-        Constants.KIOSKTAGLIST = kioskTagList;
-        print(Constants.KIOSKTAGLIST);
-
-        print(Constants.KIOSKSTR);
+      if (i != 0) {
         url =
-            'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
-                Constants.TODATE
-                    .add(new Duration(days: 1))
-                    .toString()
-                    .split(' ')[0] +
-                '&kioskstr=' +
-                Constants.KIOSKSTR +
-                '&startdate=' +
-                Constants.FROMDATE.toString().split(' ')[0];
+            'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
+                userId.toString();
         print(url);
 
-        analyst.fetchPost(url).then((responseFetch) {
-          print(responseFetch);
+        String kioskString = '';
+        List<String> kioskTagList = [];
+        analyst.fetchPost(url).then((responseFromMapping) {
+          print(responseFromMapping);
+          List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
 
+          for (var kiosk in kioskLists) {
+            LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
+            print('fdfdfdgfdddd ' +
+                LoginPage.mapping[kiosk['kiosktag']].toString());
+            kioskString = kioskString + kiosk['kioskid'].toString() + ",";
+            kioskTagList.add(kiosk['kiosktag']);
+          }
+          kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
+          Constants.KIOSKSTR = kioskTagList.last;
           setState(() {
-            Constants.INVOICE_DETAILS = responseFetch['body']['totaltransaction'];
-            Constants.USERLIST = responseFetch['body']['totaluser'];
+            Constants.SELECTEDKIOSKNUMBER =
+                Constants.KIOSKSTR.split(',').length;
           });
+          print(kioskTagList.last);
+          kioskTagList.removeLast();
+          Constants.KIOSKTAGLIST = kioskTagList;
+          print(Constants.KIOSKTAGLIST);
 
-          print(Constants.INVOICE_DETAILS);
-          print(Constants.USERLIST);
+          print(Constants.KIOSKSTR);
         });
-      });
+        i = 0;
+      }
     });
+    url =
+        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+            Constants.TODATE
+                .add(new Duration(days: 1))
+                .toString()
+                .split(' ')[0] +
+            '&kioskstr=' +
+            Constants.KIOSKSTR +
+            '&startdate=' +
+            Constants.FROMDATE.toString().split(' ')[0];
+    print(url);
+
+    analyst.fetchPost(url).then((responseFetch) {
+      print(responseFetch);
+
+      setState(() {
+        Constants.INVOICE_DETAILS = responseFetch['body']['totaltransaction'];
+        Constants.USERLIST = responseFetch['body']['totaluser'];
+      });
+
+      print(Constants.INVOICE_DETAILS);
+      print(Constants.USERLIST);
+    });
+
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
@@ -197,6 +205,53 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
 
   @override
   Widget build(BuildContext context) {
+    final textSelectedKiosk =
+        new Text(Constants.SELECTEDKIOSKNUMBER.toString());
+
+    final analystAppBar = new AppBar(
+      title: Text('Analyst Panel',
+          style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
+    );
+
+    final showResultButton = new RaisedButton(
+      padding: const EdgeInsets.all(8.0),
+      textColor: Colors.black,
+      color: Colors.blue,
+      onPressed: () {
+        String url;
+        Analyst analyst = new Analyst();
+        url =
+            'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+                Constants.TODATE
+                    .add(new Duration(days: 1))
+                    .toString()
+                    .split(' ')[0] +
+                '&kioskstr=' +
+                Constants.KIOSKSTR +
+                '&startdate=' +
+                Constants.FROMDATE.toString().split(' ')[0];
+        print(url);
+
+        analyst.fetchPost(url).then((responseFetch) {
+          print(responseFetch);
+
+          setState(() {
+            Constants.INVOICE_DETAILS =
+                responseFetch['body']['totaltransaction'];
+            Constants.USERLIST = responseFetch['body']['totaluser'];
+          });
+
+          print(Constants.INVOICE_DETAILS);
+          print(Constants.USERLIST);
+        });
+      },
+      child: Text("Show Result",
+          style: TextStyle(
+              fontStyle: FontStyle.normal,
+              fontSize: 20.0,
+              color: Colors.white)),
+    );
+
     final selectKioskButton = new RaisedButton(
       padding: const EdgeInsets.all(8.0),
       textColor: Colors.black,
@@ -204,8 +259,8 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
       onPressed: () {
         if (Constants.FROMDATE.difference(Constants.TODATE).inDays > 0) {
           setState(() {
-            Constants.INVOICE_DETAILS=0;
-            Constants.USERLIST=0;
+            Constants.INVOICE_DETAILS = 0;
+            Constants.USERLIST = 0;
           });
           Fluttertoast.showToast(
             msg: "End Date should be greater than Start date",
@@ -368,6 +423,7 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
                       fontStyle: FontStyle.normal,
                       fontSize: 20.0,
                       color: Colors.white)),
+              subtitle: Text('Total Amount : '),
               trailing: Text(Constants.USERLIST.toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -446,6 +502,7 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
     );
 
     return Scaffold(
+      appBar: analystAppBar,
       body: DropdownButtonHideUnderline(
         child: SafeArea(
           top: true,
@@ -458,7 +515,9 @@ class GetKioskListState extends State<GetKioskList> with WidgetsBindingObserver 
               fromDate,
               toDate,
               space,
+              textSelectedKiosk,
               selectKioskButton,
+              showResultButton,
               space,
               invoiceDetailsCard,
               space,

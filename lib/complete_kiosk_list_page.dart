@@ -79,34 +79,34 @@ class _KioskDataTableState extends State<KioskDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    final resultButton = new RaisedButton(
-      padding: const EdgeInsets.all(8.0),
-      textColor: Colors.black,
-      color: Colors.blue,
-      onPressed: () {
-        Constants.KIOSKSTR = '';
-        int i = 0;
-        for (var kioskTagtoStr in KioskDataSource.getKioskList()) {
-          if (KioskDataSource._kiosks[i++].selected) {
-            print(kioskTagtoStr.name +
-                'jjjdkjdkjsdjksdjsjd' +
-                LoginPage.mapping[kioskTagtoStr.name].toString());
-            Constants.KIOSKSTR = Constants.KIOSKSTR +
-                LoginPage.mapping[kioskTagtoStr.name].toString() +
-                ',';
-          }
-        }
 
-        Constants.KIOSKSTR =
-            Constants.KIOSKSTR.substring(0, Constants.KIOSKSTR.length - 1);
-        print(Constants.KIOSKSTR);
-        Navigator.pushReplacementNamed(context, GetKioskList.tag);
-      },
-      child: Text("Show Result",
-          style: TextStyle(
-              fontStyle: FontStyle.normal,
-              fontSize: 20.0,
-              color: Colors.white)),
+    final kioskListAppBar = new AppBar(
+        automaticallyImplyLeading: true,
+        title: Text('Kiosk List',
+            style: TextStyle(
+                fontStyle: FontStyle.normal,
+                color: Colors.white)),
+        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            Constants.KIOSKSTR = '';
+            int i = 0;
+            for (var kioskTagtoStr in KioskDataSource.getKioskList()) {
+              if (KioskDataSource._kiosks[i++].selected) {
+                print(kioskTagtoStr.name +
+                    'jjjdkjdkjsdjksdjsjd' +
+                    LoginPage.mapping[kioskTagtoStr.name].toString());
+                Constants.KIOSKSTR = Constants.KIOSKSTR +
+                    LoginPage.mapping[kioskTagtoStr.name].toString() +
+                    ',';
+              }
+            }
+
+            Constants.KIOSKSTR =
+                Constants.KIOSKSTR.substring(0, Constants.KIOSKSTR.length - 1);
+            print(Constants.KIOSKSTR);
+            Navigator.pushReplacementNamed(context, GetKioskList.tag);
+          },
+        )
     );
 
     final kioskListTable = new PaginatedDataTable(
@@ -130,6 +130,7 @@ class _KioskDataTableState extends State<KioskDataTable> {
     );
 
     return Scaffold(
+      appBar: kioskListAppBar,
       body: SafeArea(
         top: true,
         bottom: true,
@@ -139,7 +140,6 @@ class _KioskDataTableState extends State<KioskDataTable> {
           padding: const EdgeInsets.all(20.0),
           children: <Widget>[
             kioskListTable,
-            resultButton,
           ],
         ),
       ),
