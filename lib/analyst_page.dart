@@ -59,7 +59,7 @@ class GetKioskList extends StatefulWidget {
   GetKioskList({Key key}) : super(key: key);
 
   @override
-  createState() => new GetKioskListState();
+  createState() => GetKioskListState();
 }
 
 class Analyst {
@@ -113,11 +113,13 @@ class Analyst {
 
 class GetKioskListState extends State<GetKioskList>
     with WidgetsBindingObserver {
+  GetKioskListState(){
+    print('hello');
+  }
   List<String> _allKiosk = Constants.KIOSKTAGLIST;
-  int i = 1;
-
   @override
   void initState() {
+    super.initState();
     setState(() {
       Constants.SELECTEDKIOSKNUMBER = Constants.KIOSKSTR.split(',').length;
     });
@@ -125,70 +127,74 @@ class GetKioskListState extends State<GetKioskList>
     Analyst analyst = new Analyst();
     int userId;
     String url = '';
+
     SharedPreferences.getInstance().then((SharedPreferences sp) {
+      print('jjjjjjj'+sp.getInt("callMapping").toString());
       sharedPreferences = sp;
       userId = sharedPreferences?.getInt('userid');
-      if (i != 0) {
-        url =
-            'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
-                userId.toString();
-        print(url);
+        if(sharedPreferences.getInt("callMapping")==1) {
+          sharedPreferences.setInt("callMapping", 0);
+          url =
+              'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
+                  userId.toString();
+          print(url);
 
-        String kioskString = '';
-        List<String> kioskTagList = [];
-        analyst.fetchPost(url).then((responseFromMapping) {
-          print(responseFromMapping);
-          List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
+          String kioskString = '';
+          List<String> kioskTagList = [];
+          analyst.fetchPost(url).then((responseFromMapping) {
+            print(responseFromMapping);
+            List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
 
-          for (var kiosk in kioskLists) {
-            LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
-            print('fdfdfdgfdddd ' +
-                LoginPage.mapping[kiosk['kiosktag']].toString());
-            kioskString = kioskString + kiosk['kioskid'].toString() + ",";
-            kioskTagList.add(kiosk['kiosktag']);
-          }
-          kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
-          Constants.KIOSKSTR = kioskTagList.last;
-          setState(() {
-            Constants.SELECTEDKIOSKNUMBER =
-                Constants.KIOSKSTR.split(',').length;
+            for (var kiosk in kioskLists) {
+              LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
+              print('fdfdfdgfdddd ' +
+                  LoginPage.mapping[kiosk['kiosktag']].toString());
+              kioskString = kioskString + kiosk['kioskid'].toString() + ",";
+              kioskTagList.add(kiosk['kiosktag']);
+            }
+            kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
+            Constants.KIOSKSTR = kioskTagList.last;
+            setState(() {
+              Constants.SELECTEDKIOSKNUMBER =
+                  Constants.KIOSKSTR
+                      .split(',')
+                      .length;
+            });
+            print(kioskTagList.last);
+            kioskTagList.removeLast();
+            Constants.KIOSKTAGLIST = kioskTagList;
+            print(Constants.KIOSKTAGLIST);
+
+            print(Constants.KIOSKSTR);
           });
-          print(kioskTagList.last);
-          kioskTagList.removeLast();
-          Constants.KIOSKTAGLIST = kioskTagList;
-          print(Constants.KIOSKTAGLIST);
-
-          print(Constants.KIOSKSTR);
-        });
-        i = 0;
-      }
+        }
     });
-    url =
-        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
-            Constants.TODATE
-                .add(new Duration(days: 1))
-                .toString()
-                .split(' ')[0] +
-            '&kioskstr=' +
-            Constants.KIOSKSTR +
-            '&startdate=' +
-            Constants.FROMDATE.toString().split(' ')[0];
-    print(url);
-
-    analyst.fetchPost(url).then((responseFetch) {
-      print(responseFetch);
-
-      setState(() {
-        Constants.INVOICE_DETAILS = responseFetch['body']['totaltransaction'];
-        Constants.USERLIST = responseFetch['body']['totaluser'];
-      });
-
-      print(Constants.INVOICE_DETAILS);
-      print(Constants.USERLIST);
-    });
+//    url =
+//        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+//            Constants.TODATE
+//                .add(new Duration(days: 1))
+//                .toString()
+//                .split(' ')[0] +
+//            '&kioskstr=' +
+//            Constants.KIOSKSTR +
+//            '&startdate=' +
+//            Constants.FROMDATE.toString().split(' ')[0];
+//    print(url);
+//
+//    analyst.fetchPost(url).then((responseFetch) {
+//      print(responseFetch);
+//
+//      setState(() {
+//        Constants.INVOICE_DETAILS = responseFetch['body']['totaltransaction'];
+//        Constants.USERLIST = responseFetch['body']['totaluser'];
+//      });
+//
+//      print(Constants.INVOICE_DETAILS);
+//      print(Constants.USERLIST);
+//    });
 
     WidgetsBinding.instance.addObserver(this);
-    super.initState();
+
   }
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {

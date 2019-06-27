@@ -30,6 +30,7 @@ class MyAppState extends State<MyApp> {
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
+      sharedPreferences.setInt("callMapping",1);
       _testValue = sharedPreferences.getBool('Logged_In');
       // will be null if never previously saved
       if (_testValue == null) {
@@ -37,6 +38,7 @@ class MyAppState extends State<MyApp> {
         check = LoginPage();
         persist(_testValue); // set an initial value
       } else if (_testValue) {
+
         check = GetKioskList();
       }
       setState(() {});

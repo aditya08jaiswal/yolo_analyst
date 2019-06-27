@@ -222,6 +222,7 @@ class _LoginPageState extends State<LoginPage> {
               Constants.USERLIST = responseFetch['body']['totaluser'];
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
+              sharedPreferences.setInt("callMapping", 1);
               Navigator.of(context).pushReplacementNamed(GetKioskList.tag);
             });
           });

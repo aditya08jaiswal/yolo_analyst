@@ -14,7 +14,7 @@ class Kiosk {
 }
 
 class KioskDataSource extends DataTableSource {
-  int _selectedCount = getKioskList().length;
+  int _selectedCount = Constants.KIOSKSTR.split(',').length;
 
   static List<Kiosk> getKioskList() {
     List<Kiosk> _kiosks = [];
