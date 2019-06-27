@@ -371,7 +371,7 @@ class GetKioskListState extends State<GetKioskList>
       },
     );
 
-    final space = const SizedBox(height: 58.0);
+    final space = const SizedBox(height: 40.0);
 
     final Color cardBackgroundColor = const Color(0xFF337ab7);
     final Color cardDetailColor = const Color(0xFFF5F5F5);
@@ -396,18 +396,6 @@ class GetKioskListState extends State<GetKioskList>
                       fontStyle: FontStyle.normal,
                       fontSize: 20.0,
                       color: Colors.white)),
-//              subtitle: Container(
-//                height: 40,
-//                child: ListView(children: <Widget>[
-//                  Text('Total Amount : ${Constants.TOTALAMOUNT}',
-//                      textAlign: TextAlign.start,
-//                      style: TextStyle(
-//                          fontStyle: FontStyle.normal, color: Colors.white)),
-//                  Text('Unpaid Amount : ${Constants.UNPAIDAMOUNT}',
-//                      style: TextStyle(
-//                          fontStyle: FontStyle.normal, color: Colors.white)),
-//                ]),
-//              ),
               trailing: Text(Constants.INVOICE_DETAILS.toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -459,7 +447,6 @@ class GetKioskListState extends State<GetKioskList>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Row(
-
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -470,12 +457,12 @@ class GetKioskListState extends State<GetKioskList>
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
-                                      color: Colors.blue)),
+                                      color: cardBackgroundColor)),
                               Text('${Constants.TOTALAMOUNT}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
-                                      color: Colors.blue)),
+                                      color: cardBackgroundColor)),
                             ],
                           ),
                         ),
@@ -489,12 +476,12 @@ class GetKioskListState extends State<GetKioskList>
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
-                                      color: Colors.blue)),
+                                      color: cardBackgroundColor)),
                               Text('${Constants.UNPAIDAMOUNT}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
-                                      color: Colors.blue)),
+                                      color: cardBackgroundColor)),
                             ],
                           ),
                         ),
@@ -505,7 +492,7 @@ class GetKioskListState extends State<GetKioskList>
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.arrow_forward,
-                      color: Colors.blue,
+                      color: cardBackgroundColor,
                       size: 30.0,
                     ),
                   ),
@@ -592,16 +579,17 @@ class GetKioskListState extends State<GetKioskList>
                     child: Center(
                       child: const Text('View Details',
                           style: TextStyle(
+                            fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.normal,
-                              fontSize: 20.0,
-                              color: Colors.blue)),
+                              fontSize: 18.0,
+                              color: Color(0xFF337ab7))),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.arrow_forward,
-                      color: Colors.blue,
+                      color: cardBackgroundColor,
                       size: 30.0,
                     ),
                   ),
