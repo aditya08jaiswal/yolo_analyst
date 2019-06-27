@@ -5,6 +5,8 @@ import 'constants.dart';
 import 'analyst_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_country_picker/country.dart';
+import 'package:flutter_country_picker/flutter_country_picker.dart';
 
 TextEditingController usernameController = new TextEditingController();
 TextEditingController passwordController = new TextEditingController();
@@ -85,8 +87,8 @@ class Analyst {
       Constants.USERID = response['body']['userid'];
       for (var kiosk in kioskList) {
         LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
-        print(
-            'MAPPED KIOSK ID : ' + LoginPage.mapping[kiosk['kiosktag']].toString());
+        print('MAPPED KIOSK ID : ' +
+            LoginPage.mapping[kiosk['kiosktag']].toString());
         i++;
         KioskString = KioskString + kiosk['kioskid'].toString() + ",";
         kioskTagList.add(kiosk['kiosktag']);
@@ -124,6 +126,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   SharedPreferences sharedPreferences;
+  Country _countrySelected;
+  String dialingCodeSelectedCountry;
 
   @override
   void initState() {
@@ -220,9 +224,9 @@ class _LoginPageState extends State<LoginPage> {
               Constants.INVOICE_DETAILS =
                   responseFetch['body']['invoicedata']['invoicecount'];
               Constants.TOTALAMOUNT =
-              responseFetch['body']['invoicedata']['invoiceamount'];
+                  responseFetch['body']['invoicedata']['invoiceamount'];
               Constants.UNPAIDAMOUNT =
-              responseFetch['body']['invoicedata']['invoiceamountunpaid'];
+                  responseFetch['body']['invoicedata']['invoiceamountunpaid'];
               Constants.USERLIST = responseFetch['body']['totaluser'];
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
@@ -237,23 +241,51 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+    final countryCode = new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+      CountryPicker(
+        dense: false,
+        showFlag: true,
+        //displays flag, true by default
+        showDialingCode: true,
+        //displays dialing code, false by default
+        showName: false,
+        //displays country name, true by default
+        onChanged: (Country country) {
+          setState(() {
+            _countrySelected = country;
+            dialingCodeSelectedCountry = _countrySelected.dialingCode.toString();
+            print('DIALING CODE OF SELECTED COUNTRY : '+ dialingCodeSelectedCountry);
+          });
+        },
+        selectedCountry: _countrySelected,
+      ),
+    ]);
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Center(
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              children: <Widget>[
-                logo,
-                SizedBox(height: 48.0),
-                email,
-                SizedBox(height: 8.0),
-                password,
-                SizedBox(height: 24.0),
-                loginButton
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  children: <Widget>[
+                    logo,
+                    SizedBox(height: 48.0),
+                    countryCode,
+                    email,
+                    SizedBox(height: 8.0),
+                    password,
+                    SizedBox(height: 24.0),
+                    loginButton
+                  ],
+                ),
+              ),
+            ],
           ),
         ));
   }
