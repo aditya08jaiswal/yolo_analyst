@@ -253,32 +253,64 @@ class GetKioskListState extends State<GetKioskList>
       textColor: Colors.black,
       color: Colors.blue,
       onPressed: () {
-        String url;
-        Analyst analyst = new Analyst();
-        url =
-            'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
-                Constants.TODATE
-                    .add(new Duration(days: 1))
-                    .toString()
-                    .split(' ')[0] +
-                '&kioskstr=' +
-                Constants.KIOSKSTR +
-                '&startdate=' +
-                Constants.FROMDATE.toString().split(' ')[0];
-        print(url);
-
-        analyst.fetchPost(url).then((responseFetch) {
-          print(responseFetch);
-
+        if (Constants.FROMDATE.difference(Constants.TODATE).inDays > 0) {
           setState(() {
-            Constants.INVOICE_DETAILS =
-                responseFetch['body']['totaltransaction'];
-            Constants.USERLIST = responseFetch['body']['totaluser'];
+            Constants.INVOICE_DETAILS = 0;
+            Constants.USERLIST = 0;
+            Constants.TOTALAMOUNT = 0;
+            Constants.UNPAIDAMOUNT = 0;
           });
+          Fluttertoast.showToast(
+            msg: "End Date should be greater than Start date",
+            toastLength: Toast.LENGTH_SHORT,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+          );
+          throw new Exception("Date isuue");
+        } else {
+          String url;
+          Analyst analyst = new Analyst();
+          url =
+              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+                  Constants.TODATE
+                      .add(new Duration(days: 1))
+                      .toString()
+                      .split(' ')[0] +
+                  '&kioskstr=' +
+                  Constants.KIOSKSTR +
+                  '&startdate=' +
+                  Constants.FROMDATE.toString().split(' ')[0];
+          print(url);
 
-          print(Constants.INVOICE_DETAILS);
-          print(Constants.USERLIST);
-        });
+          analyst.fetchPost(url).then((responseFetch) {
+            print(responseFetch);
+
+            setState(() {
+              Constants.INVOICE_DETAILS =
+                  responseFetch['body']['invoicedata']['invoicecount'];
+              Constants.USERLIST = responseFetch['body']['totaluser'];
+              Constants.TOTALAMOUNT =
+                  responseFetch['body']['invoicedata']['invoiceamount'];
+              Constants.UNPAIDAMOUNT =
+                  responseFetch['body']['invoicedata']['invoiceamountunpaid'];
+
+              if (Constants.INVOICE_DETAILS.toString() == "null") {
+                Constants.INVOICE_DETAILS = 0;
+              }
+
+              if (Constants.TOTALAMOUNT.toString() == "null") {
+                Constants.TOTALAMOUNT = 0;
+              }
+
+              if (Constants.UNPAIDAMOUNT.toString() == "null") {
+                Constants.UNPAIDAMOUNT = 0;
+              }
+            });
+
+            print(Constants.INVOICE_DETAILS);
+            print(Constants.USERLIST);
+          });
+        }
       },
       child: Text("Show Result",
           style: TextStyle(
@@ -296,6 +328,8 @@ class GetKioskListState extends State<GetKioskList>
           setState(() {
             Constants.INVOICE_DETAILS = 0;
             Constants.USERLIST = 0;
+            Constants.TOTALAMOUNT = 0;
+            Constants.UNPAIDAMOUNT = 0;
           });
           Fluttertoast.showToast(
             msg: "End Date should be greater than Start date",
@@ -341,6 +375,7 @@ class GetKioskListState extends State<GetKioskList>
 
     final Color cardBackgroundColor = const Color(0xFF337ab7);
     final Color cardDetailColor = const Color(0xFFF5F5F5);
+
     final invoiceDetailsCard = Card(
       elevation: 5.0,
       color: cardDetailColor,
@@ -361,10 +396,18 @@ class GetKioskListState extends State<GetKioskList>
                       fontStyle: FontStyle.normal,
                       fontSize: 20.0,
                       color: Colors.white)),
-              subtitle: Text('Total Amount : ',
-                  style: TextStyle(
-                      fontStyle: FontStyle.normal,
-                      color: Colors.white)),
+//              subtitle: Container(
+//                height: 40,
+//                child: ListView(children: <Widget>[
+//                  Text('Total Amount : ${Constants.TOTALAMOUNT}',
+//                      textAlign: TextAlign.start,
+//                      style: TextStyle(
+//                          fontStyle: FontStyle.normal, color: Colors.white)),
+//                  Text('Unpaid Amount : ${Constants.UNPAIDAMOUNT}',
+//                      style: TextStyle(
+//                          fontStyle: FontStyle.normal, color: Colors.white)),
+//                ]),
+//              ),
               trailing: Text(Constants.INVOICE_DETAILS.toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -412,19 +455,51 @@ class GetKioskListState extends State<GetKioskList>
               });
             },
             child: Container(
-              height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: const Text('View Details',
-                          style: TextStyle(
-                              fontStyle: FontStyle.normal,
-                              fontSize: 20.0,
-                              color: Colors.blue)),
-                    ),
+                  Row(
+
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text('Total Amount',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.blue)),
+                              Text('${Constants.TOTALAMOUNT}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.blue)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text('Unpaid Amount',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.blue)),
+                              Text('${Constants.UNPAIDAMOUNT}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.blue)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -509,7 +584,6 @@ class GetKioskListState extends State<GetKioskList>
               });
             },
             child: Container(
-              height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

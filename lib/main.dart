@@ -60,7 +60,7 @@ class MyAppState extends State<MyApp> {
       title: 'App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
+        primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
       home: check,

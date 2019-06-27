@@ -218,7 +218,11 @@ class _LoginPageState extends State<LoginPage> {
               Constants.KIOSKTAGLIST = kioskTagList;
               print(responseFetch);
               Constants.INVOICE_DETAILS =
-                  responseFetch['body']['totaltransaction'];
+                  responseFetch['body']['invoicedata']['invoicecount'];
+              Constants.TOTALAMOUNT =
+              responseFetch['body']['invoicedata']['invoiceamount'];
+              Constants.UNPAIDAMOUNT =
+              responseFetch['body']['invoicedata']['invoiceamountunpaid'];
               Constants.USERLIST = responseFetch['body']['totaluser'];
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);

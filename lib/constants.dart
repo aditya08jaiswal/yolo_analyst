@@ -18,4 +18,6 @@ class Constants{
   static int USERID=0;
   static bool dateIssue=false;
   static int SELECTEDKIOSKNUMBER = 0;
+  static int TOTALAMOUNT = 0;
+  static int UNPAIDAMOUNT = 0;
 }
