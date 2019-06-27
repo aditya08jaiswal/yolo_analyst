@@ -251,7 +251,7 @@ class GetKioskListState extends State<GetKioskList>
     final showResultButton = new RaisedButton(
       padding: const EdgeInsets.all(8.0),
       textColor: Colors.black,
-      color: Colors.blue,
+      color: Color(0xFF337ab7),
       onPressed: () {
         if (Constants.FROMDATE.difference(Constants.TODATE).inDays > 0) {
           setState(() {
@@ -322,7 +322,7 @@ class GetKioskListState extends State<GetKioskList>
     final selectKioskButton = new RaisedButton(
       padding: const EdgeInsets.all(8.0),
       textColor: Colors.black,
-      color: Colors.blue,
+      color: Color(0xFF337ab7),
       onPressed: () {
         if (Constants.FROMDATE.difference(Constants.TODATE).inDays > 0) {
           setState(() {
