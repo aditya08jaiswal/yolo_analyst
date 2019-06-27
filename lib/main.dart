@@ -39,6 +39,8 @@ class MyAppState extends State<MyApp> {
         persist(_testValue); // set an initial value
       } else if (_testValue) {
 
+        print('MAIN DART FILE');
+        sharedPreferences.setInt("callMapping",1);
         check = GetKioskList();
       }
       setState(() {});

@@ -86,7 +86,7 @@ class Analyst {
       for (var kiosk in kioskList) {
         LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
         print(
-            'fdfdfdgfdddd ' + LoginPage.mapping[kiosk['kiosktag']].toString());
+            'MAPPED KIOSK ID : ' + LoginPage.mapping[kiosk['kiosktag']].toString());
         i++;
         KioskString = KioskString + kiosk['kioskid'].toString() + ",";
         kioskTagList.add(kiosk['kiosktag']);

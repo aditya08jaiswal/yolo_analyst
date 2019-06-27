@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'analyst_page.dart';
 import 'constants.dart';
 import 'login_page.dart';
@@ -71,11 +73,57 @@ class KioskDataTable extends StatefulWidget {
   _KioskDataTableState createState() => _KioskDataTableState();
 }
 
-class _KioskDataTableState extends State<KioskDataTable> {
+class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObserver{
   final KioskDataSource _kiosksDataSource = KioskDataSource();
   List<int> kioskStr = [];
 
   int _rowsPerPage = 20;
+
+  @override
+  void initState() {
+
+    print('INITSTATE COMPLETE KIOSK LIST PAGE');
+    // TODO: implement initState
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    print('DISPOSE COMPLETE KIOSK LIST PAGE');
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    switch(state) {
+      case AppLifecycleState.inactive:
+        print('INACTIVE COMPLETE KIOSK LIST PAGE');
+
+        SharedPreferences.getInstance().then((SharedPreferences sp){
+          sp.setInt("callMapping", 1);
+        });
+
+        break;
+
+      case AppLifecycleState.resumed:
+        print('RESUMED COMPLETE KIOSK LIST PAGE');
+        break;
+
+      case AppLifecycleState.paused:
+        print('PAUSED COMPLETE KIOSK LIST PAGE');
+        break;
+
+      case AppLifecycleState.suspending:
+        print('SUSPENDING COMPLETE KIOSK LIST PAGE');
+        break;
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +141,7 @@ class _KioskDataTableState extends State<KioskDataTable> {
             for (var kioskTagtoStr in KioskDataSource.getKioskList()) {
               if (KioskDataSource._kiosks[i++].selected) {
                 print(kioskTagtoStr.name +
-                    'jjjdkjdkjsdjksdjsjd' +
+                    ' - KIOSK MAPPED ID ' +
                     LoginPage.mapping[kioskTagtoStr.name].toString());
                 Constants.KIOSKSTR = Constants.KIOSKSTR +
                     LoginPage.mapping[kioskTagtoStr.name].toString() +

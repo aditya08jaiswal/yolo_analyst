@@ -113,10 +113,12 @@ class Analyst {
 
 class GetKioskListState extends State<GetKioskList>
     with WidgetsBindingObserver {
-  GetKioskListState(){
+  GetKioskListState() {
     print('hello');
   }
+
   List<String> _allKiosk = Constants.KIOSKTAGLIST;
+
   @override
   void initState() {
     super.initState();
@@ -129,45 +131,43 @@ class GetKioskListState extends State<GetKioskList>
     String url = '';
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
-      print('jjjjjjj'+sp.getInt("callMapping").toString());
+      print('CALL MAPPING : ' + sp.getInt("callMapping").toString());
       sharedPreferences = sp;
       userId = sharedPreferences?.getInt('userid');
-        if(sharedPreferences.getInt("callMapping")==1) {
-          sharedPreferences.setInt("callMapping", 0);
-          url =
-              'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
-                  userId.toString();
-          print(url);
+      if (sharedPreferences.getInt("callMapping") == 1) {
+        sharedPreferences.setInt("callMapping", 0);
+        url =
+            'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
+                userId.toString();
+        print(url);
 
-          String kioskString = '';
-          List<String> kioskTagList = [];
-          analyst.fetchPost(url).then((responseFromMapping) {
-            print(responseFromMapping);
-            List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
+        String kioskString = '';
+        List<String> kioskTagList = [];
+        analyst.fetchPost(url).then((responseFromMapping) {
+          print(responseFromMapping);
+          List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
 
-            for (var kiosk in kioskLists) {
-              LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
-              print('fdfdfdgfdddd ' +
-                  LoginPage.mapping[kiosk['kiosktag']].toString());
-              kioskString = kioskString + kiosk['kioskid'].toString() + ",";
-              kioskTagList.add(kiosk['kiosktag']);
-            }
-            kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
-            Constants.KIOSKSTR = kioskTagList.last;
-            setState(() {
-              Constants.SELECTEDKIOSKNUMBER =
-                  Constants.KIOSKSTR
-                      .split(',')
-                      .length;
-            });
-            print(kioskTagList.last);
-            kioskTagList.removeLast();
-            Constants.KIOSKTAGLIST = kioskTagList;
-            print(Constants.KIOSKTAGLIST);
-
-            print(Constants.KIOSKSTR);
+          for (var kiosk in kioskLists) {
+            LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
+            print('KIOSK MAPPED ID ' +
+                LoginPage.mapping[kiosk['kiosktag']].toString());
+            kioskString = kioskString + kiosk['kioskid'].toString() + ",";
+            kioskTagList.add(kiosk['kiosktag']);
+          }
+          kioskTagList.add(kioskString.substring(0, kioskString.length - 1));
+          Constants.KIOSKSTR = kioskTagList.last;
+          setState(() {
+            Constants.SELECTEDKIOSKNUMBER =
+                Constants.KIOSKSTR.split(',').length;
           });
-        }
+          print(kioskTagList.last);
+          kioskTagList.removeLast();
+          Constants.KIOSKTAGLIST = kioskTagList;
+          print(Constants.KIOSKTAGLIST);
+
+          print(Constants.KIOSKSTR);
+        });
+      }
     });
 //    url =
 //        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
@@ -194,7 +194,39 @@ class GetKioskListState extends State<GetKioskList>
 //    });
 
     WidgetsBinding.instance.addObserver(this);
+  }
 
+  @override
+  void dispose() {
+    print('DISPOSE');
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('INACTIVE ANALYST PAGE');
+
+        SharedPreferences.getInstance().then((SharedPreferences sp) {
+          sp.setInt("callMapping", 1);
+        });
+
+        break;
+
+      case AppLifecycleState.resumed:
+        print('RESUMED ANALYST PAGE');
+        break;
+
+      case AppLifecycleState.paused:
+        print('PAUSED ANALYST PAGE');
+        break;
+
+      case AppLifecycleState.suspending:
+        print('SUSPENDING ANALYST PAGE  ');
+        break;
+    }
   }
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
@@ -211,9 +243,6 @@ class GetKioskListState extends State<GetKioskList>
 
   @override
   Widget build(BuildContext context) {
-    final textSelectedKiosk =
-        new Text(Constants.SELECTEDKIOSKNUMBER.toString());
-
     final analystAppBar = new AppBar(
       title: Text('Analyst Panel',
           style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
@@ -279,7 +308,7 @@ class GetKioskListState extends State<GetKioskList>
           Navigator.pushReplacementNamed(context, KioskDataTable.tag);
         }
       },
-      child: Text("Select Kiosks",
+      child: Text("${Constants.SELECTEDKIOSKNUMBER} Kiosks Selected",
           style: TextStyle(
               fontStyle: FontStyle.normal,
               fontSize: 20.0,
@@ -332,6 +361,10 @@ class GetKioskListState extends State<GetKioskList>
                       fontStyle: FontStyle.normal,
                       fontSize: 20.0,
                       color: Colors.white)),
+              subtitle: Text('Total Amount : ',
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      color: Colors.white)),
               trailing: Text(Constants.INVOICE_DETAILS.toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -353,14 +386,14 @@ class GetKioskListState extends State<GetKioskList>
                   endDate.add(new Duration(days: 1)).toString().split(' ')[0];
               print(endDateValue);
               print(endDate);
-              String kioskidList = Constants.KIOSKSTR;
+              String kioskIdList = Constants.KIOSKSTR;
 
               Analyst a = new Analyst();
               String url =
                   'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&machinestr=transactionlist&enddate=' +
                       endDateValue +
                       '&kioskstr=' +
-                      kioskidList +
+                      kioskIdList +
                       '&startdate=' +
                       startDateValue;
 
@@ -429,7 +462,6 @@ class GetKioskListState extends State<GetKioskList>
                       fontStyle: FontStyle.normal,
                       fontSize: 20.0,
                       color: Colors.white)),
-              subtitle: Text('Total Amount : '),
               trailing: Text(Constants.USERLIST.toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -521,7 +553,6 @@ class GetKioskListState extends State<GetKioskList>
               fromDate,
               toDate,
               space,
-              textSelectedKiosk,
               selectKioskButton,
               showResultButton,
               space,
