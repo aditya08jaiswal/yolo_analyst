@@ -34,7 +34,8 @@ class Post {
   }
 }
 
-Future<Map<String, dynamic>> createPost(String url, Map body) async {
+Future<Map<String, dynamic>> createPost(
+    String url, Map body, BuildContext context) async {
   print(body);
   var body1 = jsonEncode(body);
   print(body);
@@ -45,7 +46,15 @@ Future<Map<String, dynamic>> createPost(String url, Map body) async {
       .then((http.Response response) {
     final int statusCode = response.statusCode;
 
-    if (statusCode < 200 || statusCode > 400 || json == null) {
+    if (statusCode < 200 || statusCode >= 400 || json == null) {
+      SharedPreferences sharedPreferences;
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sharedPreferences = sp;
+        sharedPreferences.setInt("callMapping", 0);
+        sharedPreferences?.setBool('Logged_In', false);
+      });
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginPage.tag, (Route<dynamic> route) => false);
       throw new Exception("Error while fetching data");
     }
     Map<String, dynamic> responseBody = jsonDecode(response.body);
@@ -53,13 +62,13 @@ Future<Map<String, dynamic>> createPost(String url, Map body) async {
   });
 }
 
-class GetKioskList extends StatefulWidget {
-  static String tag = 'getApi';
+class AnalystPage extends StatefulWidget {
+  static String tag = 'analyst-page';
 
-  GetKioskList({Key key}) : super(key: key);
+  AnalystPage({Key key}) : super(key: key);
 
   @override
-  createState() => GetKioskListState();
+  createState() => AnalystPageState();
 }
 
 class Analyst {
@@ -75,13 +84,13 @@ class Analyst {
       loginAnalyst +
       '/';
 
-  Future<List<String>> callPostApi(int id) async {
+  Future<List<String>> callPostApi(int id, BuildContext context) async {
     if (id == 0) {
       Post newPost =
           new Post(phone: Constants.USERNAME, password: Constants.PASSWORD);
 
       Map<String, dynamic> responsePostApi =
-          await createPost(CREATE_POST_URL, newPost.toMap());
+          await createPost(CREATE_POST_URL, newPost.toMap(), context);
       int i = 0;
       List<dynamic> allKioskTags = responsePostApi['body']['kiosklist'];
 
@@ -95,25 +104,33 @@ class Analyst {
     return kioskTagList;
   }
 
-  Future<Map<String, dynamic>> fetchPost(String url) async {
+  Future<Map<String, dynamic>> fetchPost(String url, BuildContext context) async {
     print(Constants.TOKEN);
     http.Response response =
         await http.get(url, headers: {'content-type': 'application/json'});
-
+print(response.statusCode);
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
       return jsonDecode(response.body);
     } else {
       print(response.statusCode);
+
+      SharedPreferences sharedPreferences;
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sharedPreferences = sp;
+        sharedPreferences.setInt("callMapping", 0);
+        sharedPreferences?.setBool('Logged_In', false);
+      });
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginPage.tag, (Route<dynamic> route) => false);
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
     }
   }
 }
 
-class GetKioskListState extends State<GetKioskList>
-    with WidgetsBindingObserver {
-  GetKioskListState() {
+class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
+  AnalystPageState() {
     print('hello');
   }
 
@@ -137,13 +154,15 @@ class GetKioskListState extends State<GetKioskList>
       if (sharedPreferences.getInt("callMapping") == 1) {
         sharedPreferences.setInt("callMapping", 0);
         url =
-            'https://healthatm.in/api/User/getKioskUserTypeMapping/?appsessiontoken='+ Constants.TOKEN +'&filetype=analyst&userid=' +
+            'https://healthatm.in/api/User/getKioskUserTypeMapping/?appsessiontoken=' +
+                Constants.TOKEN +
+                '&filetype=analyst&userid=' +
                 userId.toString();
         print(url);
 
         String kioskString = '';
         List<String> kioskTagList = [];
-        analyst.fetchPost(url).then((responseFromMapping) {
+        analyst.fetchPost(url, context).then((responseFromMapping) {
           print(responseFromMapping);
           List<dynamic> kioskLists = responseFromMapping['body']['kiosklist'];
 
@@ -271,7 +290,9 @@ class GetKioskListState extends State<GetKioskList>
           String url;
           Analyst analyst = new Analyst();
           url =
-              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&enddate=' +
+              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
+                  Constants.TOKEN +
+                  '&enddate=' +
                   Constants.TODATE
                       .add(new Duration(days: 1))
                       .toString()
@@ -282,7 +303,7 @@ class GetKioskListState extends State<GetKioskList>
                   Constants.FROMDATE.toString().split(' ')[0];
           print(url);
 
-          analyst.fetchPost(url).then((responseFetch) {
+          analyst.fetchPost(url, context).then((responseFetch) {
             print(responseFetch);
 
             setState(() {
@@ -419,9 +440,11 @@ class GetKioskListState extends State<GetKioskList>
               print(endDate);
               String kioskIdList = Constants.KIOSKSTR;
 
-              Analyst a = new Analyst();
+              Analyst analyst = new Analyst();
               String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&machinestr=transactionlist&enddate=' +
+                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
+                      Constants.TOKEN +
+                      '&machinestr=transactionlist&enddate=' +
                       endDateValue +
                       '&kioskstr=' +
                       kioskIdList +
@@ -430,7 +453,7 @@ class GetKioskListState extends State<GetKioskList>
 
               print(url);
 
-              a.fetchPost(url).then((ss) {
+              analyst.fetchPost(url, context).then((ss) {
                 List<dynamic> list = ss['body']['transactionlist'];
                 print(list);
                 Constants.INVOICE_LIST = list;
@@ -547,9 +570,11 @@ class GetKioskListState extends State<GetKioskList>
               print(endDate);
               String kioskIdList = Constants.KIOSKSTR;
 
-              Analyst a = new Analyst();
+              Analyst analyst = new Analyst();
               String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&machinestr=userlist&enddate=' +
+                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
+                      Constants.TOKEN +
+                      '&machinestr=userlist&enddate=' +
                       endDateValue +
                       '&kioskstr=' +
                       kioskIdList +
@@ -558,7 +583,7 @@ class GetKioskListState extends State<GetKioskList>
 
               print(url);
 
-              a.fetchPost(url).then((ss) {
+              analyst.fetchPost(url, context).then((ss) {
                 List<dynamic> list = ss['body']['userlist'];
                 print(list);
                 Constants.USER_LIST = list;
@@ -579,7 +604,7 @@ class GetKioskListState extends State<GetKioskList>
                     child: Center(
                       child: const Text('View Details',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.normal,
                               fontSize: 18.0,
                               color: Color(0xFF337ab7))),

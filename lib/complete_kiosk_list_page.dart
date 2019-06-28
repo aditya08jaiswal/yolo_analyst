@@ -152,7 +152,7 @@ class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObse
             Constants.KIOSKSTR =
                 Constants.KIOSKSTR.substring(0, Constants.KIOSKSTR.length - 1);
             print(Constants.KIOSKSTR);
-            Navigator.pushReplacementNamed(context, GetKioskList.tag);
+            Navigator.pushReplacementNamed(context, AnalystPage.tag);
           },
         )
     );

@@ -17,7 +17,7 @@ class MyAppState extends State<MyApp> {
   Widget check = LoginPage();
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
-    GetKioskList.tag: (context) => GetKioskList(),
+    AnalystPage.tag: (context) => AnalystPage(),
     KioskDataTable.tag: (context) => KioskDataTable(),
   };
   SharedPreferences sharedPreferences;
@@ -41,7 +41,7 @@ class MyAppState extends State<MyApp> {
 
         print('MAIN DART FILE');
         sharedPreferences.setInt("callMapping",1);
-        check = GetKioskList();
+        check = AnalystPage();
       }
       setState(() {});
     });

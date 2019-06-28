@@ -108,6 +108,13 @@ class Analyst {
       return jsonDecode(response.body);
     } else {
       print(response.statusCode);
+      Fluttertoast.showToast(
+        msg: "Wrong Credentials",
+        toastLength: Toast.LENGTH_SHORT,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.lightBlue,
+      );
+      throw new Exception("Error while fetching data");
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
     }
@@ -273,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
               sharedPreferences.setInt("callMapping", 1);
-              Navigator.of(context).pushReplacementNamed(GetKioskList.tag);
+              Navigator.of(context).pushReplacementNamed(AnalystPage.tag);
             });
           });
         },
