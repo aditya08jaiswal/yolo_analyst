@@ -157,28 +157,54 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final email = TextFormField(
-      initialValue: Constants.USERNAME,
-//      controller: usernameController,
-      keyboardType: TextInputType.text,
-      autofocus: false,
-      decoration: InputDecoration(
-        hintText: 'Phone Number',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-      ),
+    final countryCode = CountryPicker(
+      dense: false,
+      showFlag: true,
+      showDialingCode: true,
+      showName: false,
+      onChanged: (Country country) {
+        setState(() {
+          _countrySelected = country;
+          dialingCodeSelectedCountry = _countrySelected.dialingCode.toString();
+          print('DIALING CODE OF SELECTED COUNTRY : ' +
+              dialingCodeSelectedCountry);
+        });
+      },
+      selectedCountry: _countrySelected,
     );
 
-    final password = TextFormField(
+    final phoneField = TextFormField(
+      initialValue: Constants.USERNAME,
+//      controller: usernameController,
+      keyboardType: TextInputType.number,
+      autofocus: false,
+      maxLength: 10,
+      decoration: InputDecoration(
+        hintText: 'Phone Number',
+        prefix: countryCode,
+        contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+      ),
+      style: TextStyle(
+          fontStyle: FontStyle.normal,
+          fontSize: 20.0,
+          color: Colors.black),
+    );
+
+    final passwordField = TextFormField(
       initialValue: Constants.PASSWORD,
       //controller: passwordController,
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
         hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
+      style: TextStyle(
+          fontStyle: FontStyle.normal,
+          fontSize: 20.0,
+          color: Colors.black),
     );
 
     final loginButton = Padding(
@@ -235,33 +261,16 @@ class _LoginPageState extends State<LoginPage> {
             });
           });
         },
-        padding: EdgeInsets.all(12),
-        color: Colors.lightBlue,
-        child: Text('Log In', style: TextStyle(color: Colors.white)),
+        padding: EdgeInsets.all(14),
+        color: Color(0xFF337ab7),
+        child: Text('LOGIN',
+            style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.normal,
+            fontSize: 20.0,
+            color: Colors.white)),
       ),
     );
-
-    final countryCode = new Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-      CountryPicker(
-        dense: false,
-        showFlag: true,
-        //displays flag, true by default
-        showDialingCode: true,
-        //displays dialing code, false by default
-        showName: false,
-        //displays country name, true by default
-        onChanged: (Country country) {
-          setState(() {
-            _countrySelected = country;
-            dialingCodeSelectedCountry = _countrySelected.dialingCode.toString();
-            print('DIALING CODE OF SELECTED COUNTRY : '+ dialingCodeSelectedCountry);
-          });
-        },
-        selectedCountry: _countrySelected,
-      ),
-    ]);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -276,10 +285,9 @@ class _LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     logo,
                     SizedBox(height: 48.0),
-                    countryCode,
-                    email,
+                    phoneField,
                     SizedBox(height: 8.0),
-                    password,
+                    passwordField,
                     SizedBox(height: 24.0),
                     loginButton
                   ],
