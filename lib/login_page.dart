@@ -73,21 +73,21 @@ class Analyst {
 
   Future<List<String>> callPostApi(
       int id, String userPhone, String userPassword) async {
-    if (id == 0) {
-      print(CREATE_POST_URL);
-      Post newPost = new Post(phone: userPhone, password: userPassword);
+    print(CREATE_POST_URL);
+    Post newPost = new Post(phone: userPhone, password: userPassword);
 
-      Map<String, dynamic> response =
-          await createPost(CREATE_POST_URL, newPost.toMap());
-      int i = 0;
-      String KioskString = '';
-      List<dynamic> kioskList = response['body']['kiosklist'];
-      SharedPreferences sharedPreferences;
-      SharedPreferences.getInstance().then((SharedPreferences sp) {
-        sharedPreferences = sp;
-        sharedPreferences.setString(
-            "appsessiontoken", response['body']['appsessiontoken']);
-      });
+    Map<String, dynamic> response =
+    await createPost(CREATE_POST_URL, newPost.toMap());
+    int i = 0;
+    String KioskString = '';
+    List<dynamic> kioskList = response['body']['kiosklist'];
+    SharedPreferences sharedPreferences;
+    await SharedPreferences.getInstance().then((SharedPreferences sp){
+      sharedPreferences = sp;
+      sharedPreferences.setString(
+          "appsessiontoken", response['body']['appsessiontoken']);
+
+      print(sharedPreferences.getString("appsessiontoken"));
       Constants.TOKEN = response['body']['appsessiontoken'];
       Constants.USERID = response['body']['userid'];
       for (var kiosk in kioskList) {
@@ -100,14 +100,17 @@ class Analyst {
       }
       kioskTagList.add(KioskString.substring(0, KioskString.length - 1));
       print(i);
-    }
 
+
+
+
+    });
     return kioskTagList;
   }
 
   Future<Map<String, dynamic>> fetchPost(String url) async {
     http.Response response =
-        await http.get(url, headers: {'content-type': 'application/json'});
+    await http.get(url, headers: {'content-type': 'application/json'});
 
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
@@ -248,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
             DateTime endDate = new DateTime.now();
             String startDateValue = new DateTime.now().toString().split(' ')[0];
             String endDateValue =
-                endDate.add(new Duration(days: 1)).toString().split(' ')[0];
+            endDate.add(new Duration(days: 1)).toString().split(' ')[0];
             print(endDateValue);
             print(endDate);
             Constants.KIOSKSTR = kioskTagList.last;
@@ -259,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
             print(Constants.KIOSKTAGLIST);
             String url = Constants.SERVER_ADDRESS +
                 '/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
-                sharedPreferences.getString("appsessiontoken") +
+                sharedPreferences?.getString("appsessiontoken") +
                 '&enddate=' +
                 endDateValue +
                 '&kioskstr=' +
@@ -275,11 +278,11 @@ class _LoginPageState extends State<LoginPage> {
               Constants.KIOSKTAGLIST = kioskTagList;
               print(responseFetch);
               Constants.INVOICE_DETAILS =
-                  responseFetch['body']['invoicedata']['invoicecount'];
+              responseFetch['body']['invoicedata']['invoicecount'];
               Constants.TOTALAMOUNT =
-                  responseFetch['body']['invoicedata']['invoiceamount'];
+              responseFetch['body']['invoicedata']['invoiceamount'];
               Constants.UNPAIDAMOUNT =
-                  responseFetch['body']['invoicedata']['invoiceamountunpaid'];
+              responseFetch['body']['invoicedata']['invoiceamountunpaid'];
               Constants.USERLIST = responseFetch['body']['totaluser'];
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
