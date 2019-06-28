@@ -53,8 +53,6 @@ Future<Map<String, dynamic>> createPost(String url, Map body) async {
       );
       throw new Exception("Error while fetching data");
     }
-    Constants.TOKEN =
-        response.headers['set-cookie'].split(';')[3].split('=')[2];
     Map<String, dynamic> mm = jsonDecode(response.body);
     return mm;
   });
@@ -84,6 +82,7 @@ class Analyst {
       int i = 0;
       String KioskString = '';
       List<dynamic> kioskList = response['body']['kiosklist'];
+      Constants.TOKEN = response['body']['appsessiontoken'];
       Constants.USERID = response['body']['userid'];
       for (var kiosk in kioskList) {
         LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
@@ -127,7 +126,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   SharedPreferences sharedPreferences;
   Country _countrySelected;
-  String dialingCodeSelectedCountry;
+  String dialingCodeOfSelectedCountry;
 
   @override
   void initState() {
@@ -153,7 +152,10 @@ class _LoginPageState extends State<LoginPage> {
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: 48.0,
-        child: Image.asset('assets/logo.png'),
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Image.asset('assets/yolo_logo.png'),
+        ),
       ),
     );
 
@@ -165,47 +167,58 @@ class _LoginPageState extends State<LoginPage> {
       onChanged: (Country country) {
         setState(() {
           _countrySelected = country;
-          dialingCodeSelectedCountry = _countrySelected.dialingCode.toString();
+          dialingCodeOfSelectedCountry =
+              _countrySelected.dialingCode.toString();
           print('DIALING CODE OF SELECTED COUNTRY : ' +
-              dialingCodeSelectedCountry);
+              dialingCodeOfSelectedCountry);
         });
       },
       selectedCountry: _countrySelected,
     );
 
-    final phoneField = TextFormField(
-      initialValue: Constants.USERNAME,
-//      controller: usernameController,
+    final phone = TextFormField(
+      controller: usernameController,
       keyboardType: TextInputType.number,
-      autofocus: false,
-      maxLength: 10,
+      autofocus: true,
       decoration: InputDecoration(
+        border: InputBorder.none,
         hintText: 'Phone Number',
-        prefix: countryCode,
-        contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
       style: TextStyle(
-          fontStyle: FontStyle.normal,
-          fontSize: 20.0,
-          color: Colors.black),
+          fontStyle: FontStyle.normal, fontSize: 20.0, color: Colors.black),
     );
 
-    final passwordField = TextFormField(
-      initialValue: Constants.PASSWORD,
-      //controller: passwordController,
+    final phoneField = Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+      decoration: new BoxDecoration(
+          borderRadius: BorderRadius.circular(32.0),
+          border: new Border.all(color: Color(0xFF337ab7))),
+      child: Row(
+        children: <Widget>[
+          countryCode,
+          Expanded(child: phone),
+        ],
+      ),
+    );
+
+    final password = TextFormField(
+      controller: passwordController,
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
+        border: InputBorder.none,
         hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
       style: TextStyle(
-          fontStyle: FontStyle.normal,
-          fontSize: 20.0,
-          color: Colors.black),
+          fontStyle: FontStyle.normal, fontSize: 20.0, color: Colors.black),
     );
+
+    final passwordField = Container(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+        decoration: new BoxDecoration(
+            borderRadius: BorderRadius.circular(32.0),
+            border: new Border.all(color: Color(0xFF337ab7))),
+        child: password);
 
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -214,10 +227,11 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(32.0),
         ),
         onPressed: () {
+          String userPhone =
+              dialingCodeOfSelectedCountry + usernameController.text;
+          String userPassword = passwordController.text;
           Analyst a = new Analyst();
-          a
-              .callPostApi(0, Constants.USERNAME, Constants.PASSWORD)
-              .then((kioskTagList) {
+          a.callPostApi(0, userPhone, userPassword).then((kioskTagList) {
             print(Constants.USERID);
             sharedPreferences?.setInt('userid', Constants.USERID);
             DateTime endDate = new DateTime.now();
@@ -233,7 +247,9 @@ class _LoginPageState extends State<LoginPage> {
             Constants.KIOSKTAGLIST = kioskTagList;
             print(Constants.KIOSKTAGLIST);
             String url =
-                'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+                'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
+                    Constants.TOKEN +
+                    '&enddate=' +
                     endDateValue +
                     '&kioskstr=' +
                     kioskIdList +
@@ -265,10 +281,10 @@ class _LoginPageState extends State<LoginPage> {
         color: Color(0xFF337ab7),
         child: Text('LOGIN',
             style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.normal,
-            fontSize: 20.0,
-            color: Colors.white)),
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.normal,
+                fontSize: 20.0,
+                color: Colors.white)),
       ),
     );
 

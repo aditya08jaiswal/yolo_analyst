@@ -137,7 +137,7 @@ class GetKioskListState extends State<GetKioskList>
       if (sharedPreferences.getInt("callMapping") == 1) {
         sharedPreferences.setInt("callMapping", 0);
         url =
-            'https://healthatm.in/api/User/getKioskUserTypeMapping/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&filetype=analyst&userid=' +
+            'https://healthatm.in/api/User/getKioskUserTypeMapping/?appsessiontoken='+ Constants.TOKEN +'&filetype=analyst&userid=' +
                 userId.toString();
         print(url);
 
@@ -170,7 +170,7 @@ class GetKioskListState extends State<GetKioskList>
       }
     });
 //    url =
-//        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+//        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&enddate=' +
 //            Constants.TODATE
 //                .add(new Duration(days: 1))
 //                .toString()
@@ -271,7 +271,7 @@ class GetKioskListState extends State<GetKioskList>
           String url;
           Analyst analyst = new Analyst();
           url =
-              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&enddate=' +
+              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&enddate=' +
                   Constants.TODATE
                       .add(new Duration(days: 1))
                       .toString()
@@ -421,7 +421,7 @@ class GetKioskListState extends State<GetKioskList>
 
               Analyst a = new Analyst();
               String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&machinestr=transactionlist&enddate=' +
+                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&machinestr=transactionlist&enddate=' +
                       endDateValue +
                       '&kioskstr=' +
                       kioskIdList +
@@ -549,7 +549,7 @@ class GetKioskListState extends State<GetKioskList>
 
               Analyst a = new Analyst();
               String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?authkey=00:1B:23:SD:44:F5&authsecret=POR3XQNVp2WXVWP&machinestr=userlist&enddate=' +
+                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&machinestr=userlist&enddate=' +
                       endDateValue +
                       '&kioskstr=' +
                       kioskIdList +
