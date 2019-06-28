@@ -95,13 +95,14 @@ class _InvoiceDetailsDataTableState extends State<InvoiceDetailsDataTable> {
     final invoiceDetailsAppBar = new AppBar(
         automaticallyImplyLeading: true,
         title: Text('Invoice Details',
-            style: TextStyle(
-                fontStyle: FontStyle.normal,
-                color: Colors.white)),
-        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
-          onPressed:() => Navigator.pop(context, false),
-        )
-    );
+            style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context, false),
+        ));
 
     final invoiceListTable = new PaginatedDataTable(
       header: const Text('Invoice Details'),

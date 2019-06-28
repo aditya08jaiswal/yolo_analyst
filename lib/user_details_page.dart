@@ -85,13 +85,14 @@ class _UserDetailsDataTableState extends State<UserDetailsDataTable> {
     final userDetailsAppBar = new AppBar(
         automaticallyImplyLeading: true,
         title: Text('User Details',
-            style: TextStyle(
-                fontStyle: FontStyle.normal,
-                color: Colors.white)),
-        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
-          onPressed:() => Navigator.pop(context, false),
-        )
-    );
+            style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context, false),
+        ));
 
     final userDetailsTable = new PaginatedDataTable(
       header: const Text('User Details'),

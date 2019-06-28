@@ -82,6 +82,12 @@ class Analyst {
       int i = 0;
       String KioskString = '';
       List<dynamic> kioskList = response['body']['kiosklist'];
+      SharedPreferences sharedPreferences;
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sharedPreferences = sp;
+        sharedPreferences.setString(
+            "appsessiontoken", response['body']['appsessiontoken']);
+      });
       Constants.TOKEN = response['body']['appsessiontoken'];
       Constants.USERID = response['body']['userid'];
       for (var kiosk in kioskList) {
@@ -115,8 +121,6 @@ class Analyst {
         backgroundColor: Colors.lightBlue,
       );
       throw new Exception("Error while fetching data");
-      // If that response was not OK, throw an error.
-      throw Exception('Failed to load post');
     }
   }
 }
@@ -253,15 +257,15 @@ class _LoginPageState extends State<LoginPage> {
             kioskTagList.removeLast();
             Constants.KIOSKTAGLIST = kioskTagList;
             print(Constants.KIOSKTAGLIST);
-            String url =
-                'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
-                    Constants.TOKEN +
-                    '&enddate=' +
-                    endDateValue +
-                    '&kioskstr=' +
-                    kioskIdList +
-                    '&startdate=' +
-                    startDateValue;
+            String url = Constants.SERVER_ADDRESS +
+                '/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
+                sharedPreferences.getString("appsessiontoken") +
+                '&enddate=' +
+                endDateValue +
+                '&kioskstr=' +
+                kioskIdList +
+                '&startdate=' +
+                startDateValue;
 
             print(url);
 

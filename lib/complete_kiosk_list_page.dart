@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'analyst_page.dart';
 import 'constants.dart';
@@ -73,7 +72,8 @@ class KioskDataTable extends StatefulWidget {
   _KioskDataTableState createState() => _KioskDataTableState();
 }
 
-class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObserver{
+class _KioskDataTableState extends State<KioskDataTable>
+    with WidgetsBindingObserver {
   final KioskDataSource _kiosksDataSource = KioskDataSource();
   List<int> kioskStr = [];
 
@@ -81,13 +81,11 @@ class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObse
 
   @override
   void initState() {
-
     print('INITSTATE COMPLETE KIOSK LIST PAGE');
     // TODO: implement initState
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -96,15 +94,13 @@ class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObse
     super.dispose();
   }
 
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-
-    switch(state) {
+    switch (state) {
       case AppLifecycleState.inactive:
         print('INACTIVE COMPLETE KIOSK LIST PAGE');
 
-        SharedPreferences.getInstance().then((SharedPreferences sp){
+        SharedPreferences.getInstance().then((SharedPreferences sp) {
           sp.setInt("callMapping", 1);
         });
 
@@ -122,19 +118,19 @@ class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObse
         print('SUSPENDING COMPLETE KIOSK LIST PAGE');
         break;
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     final kioskListAppBar = new AppBar(
         automaticallyImplyLeading: true,
         title: Text('Kiosk List',
-            style: TextStyle(
-                fontStyle: FontStyle.normal,
-                color: Colors.white)),
-        leading: IconButton(icon:Icon(Icons.arrow_back, color: Colors.white,),
+            style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Constants.KIOSKSTR = '';
             int i = 0;
@@ -154,8 +150,7 @@ class _KioskDataTableState extends State<KioskDataTable> with WidgetsBindingObse
             print(Constants.KIOSKSTR);
             Navigator.pushReplacementNamed(context, AnalystPage.tag);
           },
-        )
-    );
+        ));
 
     final kioskListTable = new PaginatedDataTable(
       header: const Text('Kiosk List'),

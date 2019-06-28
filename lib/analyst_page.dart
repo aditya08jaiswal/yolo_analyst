@@ -104,11 +104,12 @@ class Analyst {
     return kioskTagList;
   }
 
-  Future<Map<String, dynamic>> fetchPost(String url, BuildContext context) async {
+  Future<Map<String, dynamic>> fetchPost(
+      String url, BuildContext context) async {
     print(Constants.TOKEN);
     http.Response response =
         await http.get(url, headers: {'content-type': 'application/json'});
-print(response.statusCode);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
       return jsonDecode(response.body);
@@ -153,11 +154,11 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
       userId = sharedPreferences?.getInt('userid');
       if (sharedPreferences.getInt("callMapping") == 1) {
         sharedPreferences.setInt("callMapping", 0);
-        url =
-            'https://healthatm.in/api/User/getKioskUserTypeMapping/?appsessiontoken=' +
-                Constants.TOKEN +
-                '&filetype=analyst&userid=' +
-                userId.toString();
+        url = Constants.SERVER_ADDRESS +
+            '/User/getKioskUserTypeMapping/?appsessiontoken=' +
+            sharedPreferences.getString("appsessiontoken") +
+            '&filetype=analyst&userid=' +
+            userId.toString();
         print(url);
 
         String kioskString = '';
@@ -188,29 +189,6 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
         });
       }
     });
-//    url =
-//        'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken='+ Constants.TOKEN +'&enddate=' +
-//            Constants.TODATE
-//                .add(new Duration(days: 1))
-//                .toString()
-//                .split(' ')[0] +
-//            '&kioskstr=' +
-//            Constants.KIOSKSTR +
-//            '&startdate=' +
-//            Constants.FROMDATE.toString().split(' ')[0];
-//    print(url);
-//
-//    analyst.fetchPost(url).then((responseFetch) {
-//      print(responseFetch);
-//
-//      setState(() {
-//        Constants.INVOICE_DETAILS = responseFetch['body']['totaltransaction'];
-//        Constants.USERLIST = responseFetch['body']['totaluser'];
-//      });
-//
-//      print(Constants.INVOICE_DETAILS);
-//      print(Constants.USERLIST);
-//    });
 
     WidgetsBinding.instance.addObserver(this);
   }
@@ -289,47 +267,53 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
         } else {
           String url;
           Analyst analyst = new Analyst();
-          url =
-              'https://healthatm.in/api/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
-                  Constants.TOKEN +
-                  '&enddate=' +
-                  Constants.TODATE
-                      .add(new Duration(days: 1))
-                      .toString()
-                      .split(' ')[0] +
-                  '&kioskstr=' +
-                  Constants.KIOSKSTR +
-                  '&startdate=' +
-                  Constants.FROMDATE.toString().split(' ')[0];
-          print(url);
 
-          analyst.fetchPost(url, context).then((responseFetch) {
-            print(responseFetch);
+          SharedPreferences sharedPreferences;
+          SharedPreferences.getInstance().then((SharedPreferences sp) {
+            sharedPreferences = sp;
 
-            setState(() {
-              Constants.INVOICE_DETAILS =
-                  responseFetch['body']['invoicedata']['invoicecount'];
-              Constants.USERLIST = responseFetch['body']['totaluser'];
-              Constants.TOTALAMOUNT =
-                  responseFetch['body']['invoicedata']['invoiceamount'];
-              Constants.UNPAIDAMOUNT =
-                  responseFetch['body']['invoicedata']['invoiceamountunpaid'];
+            url = Constants.SERVER_ADDRESS +
+                '/BodyVitals/getAllTestCountForDateRangeAndKiosk/?appsessiontoken=' +
+                sharedPreferences.getString("appsessiontoken") +
+                '&enddate=' +
+                Constants.TODATE
+                    .add(new Duration(days: 1))
+                    .toString()
+                    .split(' ')[0] +
+                '&kioskstr=' +
+                Constants.KIOSKSTR +
+                '&startdate=' +
+                Constants.FROMDATE.toString().split(' ')[0];
+            print(url);
 
-              if (Constants.INVOICE_DETAILS.toString() == "null") {
-                Constants.INVOICE_DETAILS = 0;
-              }
+            analyst.fetchPost(url, context).then((responseFetch) {
+              print(responseFetch);
 
-              if (Constants.TOTALAMOUNT.toString() == "null") {
-                Constants.TOTALAMOUNT = 0;
-              }
+              setState(() {
+                Constants.INVOICE_DETAILS =
+                    responseFetch['body']['invoicedata']['invoicecount'];
+                Constants.USERLIST = responseFetch['body']['totaluser'];
+                Constants.TOTALAMOUNT =
+                    responseFetch['body']['invoicedata']['invoiceamount'];
+                Constants.UNPAIDAMOUNT =
+                    responseFetch['body']['invoicedata']['invoiceamountunpaid'];
 
-              if (Constants.UNPAIDAMOUNT.toString() == "null") {
-                Constants.UNPAIDAMOUNT = 0;
-              }
+                if (Constants.INVOICE_DETAILS.toString() == "null") {
+                  Constants.INVOICE_DETAILS = 0;
+                }
+
+                if (Constants.TOTALAMOUNT.toString() == "null") {
+                  Constants.TOTALAMOUNT = 0;
+                }
+
+                if (Constants.UNPAIDAMOUNT.toString() == "null") {
+                  Constants.UNPAIDAMOUNT = 0;
+                }
+              });
+
+              print(Constants.INVOICE_DETAILS);
+              print(Constants.USERLIST);
             });
-
-            print(Constants.INVOICE_DETAILS);
-            print(Constants.USERLIST);
           });
         }
       },
@@ -441,28 +425,33 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
               String kioskIdList = Constants.KIOSKSTR;
 
               Analyst analyst = new Analyst();
-              String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
-                      Constants.TOKEN +
-                      '&machinestr=transactionlist&enddate=' +
-                      endDateValue +
-                      '&kioskstr=' +
-                      kioskIdList +
-                      '&startdate=' +
-                      startDateValue;
+              SharedPreferences sharedPreferences;
+              SharedPreferences.getInstance().then((SharedPreferences sp) {
+                sharedPreferences = sp;
 
-              print(url);
+                String url = Constants.SERVER_ADDRESS +
+                    '/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
+                    sharedPreferences.getString("appsessiontoken") +
+                    '&machinestr=transactionlist&enddate=' +
+                    endDateValue +
+                    '&kioskstr=' +
+                    kioskIdList +
+                    '&startdate=' +
+                    startDateValue;
 
-              analyst.fetchPost(url, context).then((ss) {
-                List<dynamic> list = ss['body']['transactionlist'];
-                print(list);
-                Constants.INVOICE_LIST = list;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InvoiceDetailsDataTable(),
-                  ),
-                );
+                print(url);
+
+                analyst.fetchPost(url, context).then((ss) {
+                  List<dynamic> list = ss['body']['transactionlist'];
+                  print(list);
+                  Constants.INVOICE_LIST = list;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InvoiceDetailsDataTable(),
+                    ),
+                  );
+                });
               });
             },
             child: Container(
@@ -571,28 +560,33 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
               String kioskIdList = Constants.KIOSKSTR;
 
               Analyst analyst = new Analyst();
-              String url =
-                  'https://healthatm.in/api/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
-                      Constants.TOKEN +
-                      '&machinestr=userlist&enddate=' +
-                      endDateValue +
-                      '&kioskstr=' +
-                      kioskIdList +
-                      '&startdate=' +
-                      startDateValue;
+              SharedPreferences sharedPreferences;
+              SharedPreferences.getInstance().then((SharedPreferences sp) {
+                sharedPreferences = sp;
 
-              print(url);
+                String url = Constants.SERVER_ADDRESS +
+                    '/BodyVitals/getTestDataForDateRangeAndKiosk/?appsessiontoken=' +
+                    sharedPreferences.getString("appsessiontoken") +
+                    '&machinestr=userlist&enddate=' +
+                    endDateValue +
+                    '&kioskstr=' +
+                    kioskIdList +
+                    '&startdate=' +
+                    startDateValue;
 
-              analyst.fetchPost(url, context).then((ss) {
-                List<dynamic> list = ss['body']['userlist'];
-                print(list);
-                Constants.USER_LIST = list;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserDetailsDataTable(),
-                  ),
-                );
+                print(url);
+
+                analyst.fetchPost(url, context).then((ss) {
+                  List<dynamic> list = ss['body']['userlist'];
+                  print(list);
+                  Constants.USER_LIST = list;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserDetailsDataTable(),
+                    ),
+                  );
+                });
               });
             },
             child: Container(
