@@ -126,7 +126,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   SharedPreferences sharedPreferences;
   Country _countrySelected;
-  String dialingCodeOfSelectedCountry;
+  String dialingCodeOfSelectedCountry = "91";
 
   @override
   void initState() {
