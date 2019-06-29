@@ -130,9 +130,15 @@ class Analyst {
   }
 }
 
+class AppBarChoice {
+  const AppBarChoice({this.title});
+
+  final String title;
+}
+
 class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
   AnalystPageState() {
-    print('hello');
+    print('HELLO ANALYST PAGE');
   }
 
   List<String> _allKiosk = Constants.KIOSKTAGLIST;
@@ -195,7 +201,7 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    print('DISPOSE');
+    print('DISPOSE ANALYST PAGE');
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -238,11 +244,49 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
   DateTime _fromDate = DateTime.now();
   DateTime _toDate = DateTime.now();
 
+  List<AppBarChoice> listOfAppBarChoices = <AppBarChoice>[
+    AppBarChoice(title: 'Logout'),
+  ];
+
+  void _selectAppBarChoice(AppBarChoice select) {
+    setState(() {
+      print("SELECT CHOICE WORKING");
+
+      SharedPreferences sharedPreferences;
+      SharedPreferences.getInstance().then((SharedPreferences sp) {
+        sharedPreferences = sp;
+        sharedPreferences.setInt("callMapping", 0);
+        sharedPreferences?.setBool('Logged_In', false);
+      });
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginPage.tag, (Route<dynamic> route) => false);
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final analystAppBar = new AppBar(
       title: Text('Analyst Panel',
           style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
+      actions: <Widget>[
+        PopupMenuButton<AppBarChoice>(
+          onSelected: _selectAppBarChoice,
+          itemBuilder: (BuildContext context) {
+            return listOfAppBarChoices.map((AppBarChoice choice) {
+              return PopupMenuItem<AppBarChoice>(
+                value: choice,
+                child: Text(choice.title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontStyle: FontStyle.normal,
+                        fontSize: 20.0,
+                        color: Colors.black)),
+              );
+            }).toList();
+          },
+        ),
+      ],
     );
 
     final showResultButton = new RaisedButton(
@@ -376,7 +420,7 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
       },
     );
 
-    final space = const SizedBox(height: 40.0);
+    final space = const SizedBox(height: 35.0);
 
     final Color cardBackgroundColor = const Color(0xFF337ab7);
     final Color cardDetailColor = const Color(0xFFF5F5F5);
