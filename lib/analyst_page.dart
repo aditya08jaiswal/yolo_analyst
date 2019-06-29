@@ -355,8 +355,11 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
                 }
               });
 
+
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
+              print('TOTAL AMOUNT : ' + Constants.TOTALAMOUNT.toString());
+              print('UNPAID AMOUNT : ' + Constants.UNPAIDAMOUNT.toString());
             });
           });
         }
@@ -514,7 +517,7 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
                                       color: cardBackgroundColor)),
-                              Text('${Constants.TOTALAMOUNT}',
+                              Text('Rs. ${Constants.TOTALAMOUNT}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
@@ -533,7 +536,7 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
                                       color: cardBackgroundColor)),
-                              Text('${Constants.UNPAIDAMOUNT}',
+                              Text('Rs. ${Constants.UNPAIDAMOUNT}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.normal,
