@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-import 'date_time_picker_widget.dart';
-
 class Constants {
-  static String USERNAME = '919769465241';
-  static String PASSWORD = 'y0l0adm1n';
+  static String USERNAME = '';
+  static String PASSWORD = '';
   static String SERVER_ADDRESS = 'https://healthatm.in/api';
   static String PLATFORM = 'Platform';
   static int INVOICE_DETAILS = 0;
@@ -20,4 +17,11 @@ class Constants {
   static int SELECTEDKIOSKNUMBER = 0;
   static int TOTALAMOUNT = 0;
   static int UNPAIDAMOUNT = 0;
+
+  static int BASIC_DISPATCH = 0;
+  static int BASIC_ASSEMBLED = 0;
+  static int WELLNESS_DISPATCH = 0;
+  static int WELLNESS_ASSEMBLED = 0;
+  static int ADVANCED_DISPATCH = 0;
+  static int ADVANCED_ASSEMBLED = 0;
 }

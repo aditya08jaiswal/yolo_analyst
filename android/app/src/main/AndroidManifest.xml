@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yolohealth.yolo_analyst">
+    package="com.yolohealth.yolo_management">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -10,7 +10,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="yolo_analyst"
+        android:label="YOLO Management"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

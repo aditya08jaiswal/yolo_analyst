@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-import 'analyst_page.dart';
 import 'constants.dart';
 import 'login_page.dart';
+import 'tab_page.dart';
 
 class Kiosk {
   Kiosk(this.name);
@@ -148,7 +147,7 @@ class _KioskDataTableState extends State<KioskDataTable>
             Constants.KIOSKSTR =
                 Constants.KIOSKSTR.substring(0, Constants.KIOSKSTR.length - 1);
             print(Constants.KIOSKSTR);
-            Navigator.pushReplacementNamed(context, AnalystPage.tag);
+            Navigator.pushReplacementNamed(context, TabPage.tag);
           },
         ));
 

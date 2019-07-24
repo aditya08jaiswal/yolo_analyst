@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
 import 'complete_kiosk_list_page.dart';
 import 'analyst_page.dart';
+import 'inventory_page.dart';
+import 'tab_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,6 +21,8 @@ class MyAppState extends State<MyApp> {
     LoginPage.tag: (context) => LoginPage(),
     AnalystPage.tag: (context) => AnalystPage(),
     KioskDataTable.tag: (context) => KioskDataTable(),
+    InventoryPage.tag: (context) => InventoryPage(),
+    TabPage.tag: (context) => TabPage(),
   };
   SharedPreferences sharedPreferences;
 
@@ -35,12 +39,13 @@ class MyAppState extends State<MyApp> {
       // will be null if never previously saved
       if (_testValue == null) {
         _testValue = false;
+        print('INITIAL MAIN DART FILE');
         check = LoginPage();
         persist(_testValue); // set an initial value
       } else if (_testValue) {
         print('MAIN DART FILE');
         sharedPreferences.setInt("callMapping", 1);
-        check = AnalystPage();
+        check = TabPage();
       }
       setState(() {});
     });
@@ -56,7 +61,7 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'App',
+      title: 'YOLO Management',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Color(0xFF337ab7),

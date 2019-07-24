@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
-import 'analyst_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_country_picker/country.dart';
 import 'package:flutter_country_picker/flutter_country_picker.dart';
+import 'tab_page.dart';
 
 TextEditingController usernameController = new TextEditingController();
 TextEditingController passwordController = new TextEditingController();
@@ -18,7 +18,6 @@ class Post {
   Post({this.phone, this.password});
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    print('hhhhhhh');
     return Post(
       phone: json['phone'],
       password: json['password'],
@@ -36,14 +35,14 @@ class Post {
 
 Future<Map<String, dynamic>> createPost(String url, Map body) async {
   var body1 = jsonEncode(body);
-  print(body1);
-  print(url);
+  print("LOGIN PAGE CREATE POST BODY : " + body1);
+  print("LOGIN PAGE CREATE POST URL : " + url);
   Map<String, String> userHeader = {'content-type': 'application/json'};
   return await http
       .post(url, body: body1, headers: userHeader)
       .then((http.Response response) {
     final int statusCode = response.statusCode;
-    print(response.statusCode);
+    print("CREATE POST RESPONSE CODE : " + response.statusCode.toString());
     if (statusCode < 200 || statusCode >= 400 || json == null) {
       Fluttertoast.showToast(
         msg: "Wrong Credentials",
@@ -73,23 +72,25 @@ class Analyst {
 
   Future<List<String>> callPostApi(
       int id, String userPhone, String userPassword) async {
-    print(CREATE_POST_URL);
+    print("LOGIN PAGE CALL POST API CREATE POST URL : " + CREATE_POST_URL);
     Post newPost = new Post(phone: userPhone, password: userPassword);
 
     Map<String, dynamic> response =
-    await createPost(CREATE_POST_URL, newPost.toMap());
+        await createPost(CREATE_POST_URL, newPost.toMap());
     int i = 0;
     String KioskString = '';
     List<dynamic> kioskList = response['body']['kiosklist'];
     SharedPreferences sharedPreferences;
-    await SharedPreferences.getInstance().then((SharedPreferences sp){
+    await SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       sharedPreferences.setString(
           "appsessiontoken", response['body']['appsessiontoken']);
+      print("CALL POST API APPSESSION TOKEN: " +
+          sharedPreferences.getString("appsessiontoken"));
 
-      print(sharedPreferences.getString("appsessiontoken"));
       Constants.TOKEN = response['body']['appsessiontoken'];
       Constants.USERID = response['body']['userid'];
+
       for (var kiosk in kioskList) {
         LoginPage.mapping[kiosk['kiosktag']] = kiosk['kioskid'];
         print('MAPPED KIOSK ID : ' +
@@ -100,23 +101,20 @@ class Analyst {
       }
       kioskTagList.add(KioskString.substring(0, KioskString.length - 1));
       print(i);
-
-
-
-
     });
     return kioskTagList;
   }
 
   Future<Map<String, dynamic>> fetchPost(String url) async {
     http.Response response =
-    await http.get(url, headers: {'content-type': 'application/json'});
+        await http.get(url, headers: {'content-type': 'application/json'});
 
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON.
       return jsonDecode(response.body);
     } else {
-      print(response.statusCode);
+      print("LOGIN PAGE FETCH POST STATUS CODE : " +
+          response.statusCode.toString());
       Fluttertoast.showToast(
         msg: "Wrong Credentials",
         toastLength: Toast.LENGTH_SHORT,
@@ -148,9 +146,6 @@ class _LoginPageState extends State<LoginPage> {
 
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
-
-      // will be null if never previously saved
-
       setState(() {});
     });
   }
@@ -244,6 +239,13 @@ class _LoginPageState extends State<LoginPage> {
           String userPhone =
               dialingCodeOfSelectedCountry + usernameController.text;
           String userPassword = passwordController.text;
+
+          Constants.USERNAME = userPhone;
+          Constants.PASSWORD = userPassword;
+
+          print('USERNAME : ' + Constants.USERNAME.toString());
+          print('PASSWORD : ' + Constants.PASSWORD.toString());
+
           Analyst a = new Analyst();
           a.callPostApi(0, userPhone, userPassword).then((kioskTagList) {
             print(Constants.USERID);
@@ -251,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
             DateTime endDate = new DateTime.now();
             String startDateValue = new DateTime.now().toString().split(' ')[0];
             String endDateValue =
-            endDate.add(new Duration(days: 1)).toString().split(' ')[0];
+                endDate.add(new Duration(days: 1)).toString().split(' ')[0];
             print(endDateValue);
             print(endDate);
             Constants.KIOSKSTR = kioskTagList.last;
@@ -270,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                 '&startdate=' +
                 startDateValue;
 
-            print(url);
+            print("LOGIN BUTTON PRESSED : " + url);
 
             a.fetchPost(url).then((responseFetch) {
               persist(true);
@@ -278,16 +280,16 @@ class _LoginPageState extends State<LoginPage> {
               Constants.KIOSKTAGLIST = kioskTagList;
               print(responseFetch);
               Constants.INVOICE_DETAILS =
-              responseFetch['body']['invoicedata']['invoicecount'];
+                  responseFetch['body']['invoicedata']['invoicecount'];
               Constants.TOTALAMOUNT =
-              responseFetch['body']['invoicedata']['invoiceamount'];
+                  responseFetch['body']['invoicedata']['invoiceamount'];
               Constants.UNPAIDAMOUNT =
-              responseFetch['body']['invoicedata']['invoiceamountunpaid'];
+                  responseFetch['body']['invoicedata']['invoiceamountunpaid'];
               Constants.USERLIST = responseFetch['body']['totaluser'];
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
               sharedPreferences.setInt("callMapping", 1);
-              Navigator.of(context).pushReplacementNamed(AnalystPage.tag);
+              Navigator.of(context).pushReplacementNamed(TabPage.tag);
             });
           });
         },

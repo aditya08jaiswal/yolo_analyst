@@ -130,12 +130,6 @@ class Analyst {
   }
 }
 
-class AppBarChoice {
-  const AppBarChoice({this.title});
-
-  final String title;
-}
-
 class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
   AnalystPageState() {
     print('HELLO ANALYST PAGE');
@@ -244,51 +238,8 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
   DateTime _fromDate = DateTime.now();
   DateTime _toDate = DateTime.now();
 
-  List<AppBarChoice> listOfAppBarChoices = <AppBarChoice>[
-    AppBarChoice(title: 'Logout'),
-  ];
-
-  void _selectAppBarChoice(AppBarChoice select) {
-    setState(() {
-      print("SELECT CHOICE WORKING");
-
-      SharedPreferences sharedPreferences;
-      SharedPreferences.getInstance().then((SharedPreferences sp) {
-        sharedPreferences = sp;
-        sharedPreferences.setInt("callMapping", 0);
-        sharedPreferences?.setBool('Logged_In', false);
-      });
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginPage.tag, (Route<dynamic> route) => false);
-
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final analystAppBar = new AppBar(
-      title: Text('Analyst Panel',
-          style: TextStyle(fontStyle: FontStyle.normal, color: Colors.white)),
-      actions: <Widget>[
-        PopupMenuButton<AppBarChoice>(
-          onSelected: _selectAppBarChoice,
-          itemBuilder: (BuildContext context) {
-            return listOfAppBarChoices.map((AppBarChoice choice) {
-              return PopupMenuItem<AppBarChoice>(
-                value: choice,
-                child: Text(choice.title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontStyle: FontStyle.normal,
-                        fontSize: 20.0,
-                        color: Colors.black)),
-              );
-            }).toList();
-          },
-        ),
-      ],
-    );
-
     final showResultButton = new RaisedButton(
       padding: const EdgeInsets.all(8.0),
       textColor: Colors.black,
@@ -354,7 +305,6 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
                   Constants.UNPAIDAMOUNT = 0;
                 }
               });
-
 
               print(Constants.INVOICE_DETAILS);
               print(Constants.USERLIST);
@@ -668,7 +618,7 @@ class AnalystPageState extends State<AnalystPage> with WidgetsBindingObserver {
     );
 
     return Scaffold(
-      appBar: analystAppBar,
+//      appBar: analystAppBar,
       body: DropdownButtonHideUnderline(
         child: SafeArea(
           top: true,

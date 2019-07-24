@@ -1,4 +1,4 @@
-package com.yolohealth.yolo_analyst
+package com.yolohealth.yolo_management
 
 import android.os.Bundle
 
