@@ -24,4 +24,14 @@ class Constants {
   static int WELLNESS_ASSEMBLED = 0;
   static int ADVANCED_DISPATCH = 0;
   static int ADVANCED_ASSEMBLED = 0;
+
+
+  static String BASIC = 'Basic';
+  static String WELLNESS = 'Wellness';
+  static String ADVANCED = 'Advanced';
+  static String MACHINETYPE = '1';
+  static int INPUT_COUNT;
+  static String PRODUCTSSTR = '';
+  static List<dynamic> PRODUCT_LIST = [];
+  static List<dynamic> SHORT_DEVICES_LIST = [];
 }

@@ -5,6 +5,8 @@ import 'complete_kiosk_list_page.dart';
 import 'analyst_page.dart';
 import 'inventory_page.dart';
 import 'tab_page.dart';
+import 'product_availability_page.dart';
+import 'short_devices_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,6 +25,8 @@ class MyAppState extends State<MyApp> {
     KioskDataTable.tag: (context) => KioskDataTable(),
     InventoryPage.tag: (context) => InventoryPage(),
     TabPage.tag: (context) => TabPage(),
+    ProductAvailabilityPage.tag: (context) => ProductAvailabilityPage(),
+    ShortDevicesDataTable.tag: (context) => ShortDevicesDataTable(),
   };
   SharedPreferences sharedPreferences;
 

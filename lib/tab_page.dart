@@ -4,6 +4,7 @@ import 'analyst_page.dart';
 import 'constants.dart';
 import 'login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'product_availability_page.dart';
 
 class TabPage extends StatefulWidget {
   static String tag = 'tab-page';
@@ -52,7 +53,7 @@ class TabsState extends State<TabPage> {
     }
 
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: new Scaffold(
           appBar: AppBar(
             title: Text('YOLO Management',
@@ -79,7 +80,7 @@ class TabsState extends State<TabPage> {
             bottom: TabBar(
                 unselectedLabelColor: Colors.white70,
                 labelColor: Colors.white,
-                indicatorWeight: 2,
+                indicatorWeight: 3,
                 indicatorColor: Colors.white,
                 labelStyle:
                     TextStyle(fontStyle: FontStyle.normal, fontSize: 20.0),
@@ -90,6 +91,9 @@ class TabsState extends State<TabPage> {
                   Tab(
                     text: "Inventory",
                   ),
+                  Tab(
+                    text: "Product",
+                  ),
                 ]),
           ),
           body: TabBarView(children: [
@@ -98,6 +102,9 @@ class TabsState extends State<TabPage> {
             ),
             new Container(
               child: InventoryPage(),
+            ),
+            new Container(
+              child: ProductAvailabilityPage(),
             ),
           ]),
         ));
